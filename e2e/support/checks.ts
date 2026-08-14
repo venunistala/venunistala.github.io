@@ -1,3 +1,5 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { AxeBuilder } from "@axe-core/playwright";
 import { expect, type Page, type Response } from "@playwright/test";
 
@@ -43,8 +45,32 @@ export async function expectRenders(
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(heading);
 }
 
-export async function expectNoAxeViolations(page: Page): Promise<void> {
+/**
+ * Where each route's axe result is recorded, for CI to total up.
+ *
+ * The count in quality.json has to come from somewhere real. Inferring "the
+ * run passed, therefore zero" would be reasoning rather than measuring, and a
+ * measured number is the entire point of publishing it.
+ */
+export const AXE_RESULTS_DIR = join("reports", "axe");
+
+export async function expectNoAxeViolations(
+  page: Page,
+  route: string,
+): Promise<void> {
   const { violations } = await new AxeBuilder({ page }).analyze();
+
+  // Recorded before the assertion, so a failing run still leaves evidence of
+  // what it found rather than only that it stopped.
+  await mkdir(AXE_RESULTS_DIR, { recursive: true });
+  const name =
+    route.replace(/[^a-z0-9]+/gi, "_").replace(/^_|_$/g, "") || "root";
+  await writeFile(
+    join(AXE_RESULTS_DIR, `${name}.json`),
+    JSON.stringify({ route, violations: violations.length }),
+    "utf8",
+  );
+
   // toEqual([]) rather than a length check: on failure the diff prints the
   // offending rules and nodes, which is the information you actually need.
   expect(violations).toEqual([]);
@@ -106,7 +132,7 @@ export async function expectCleanRoute(
   const { response, consoleErrors } = await gotoCollectingConsole(page, route);
 
   await expectRenders(page, response, heading);
-  await expectNoAxeViolations(page);
+  await expectNoAxeViolations(page, route);
   await expectNavReachableByKeyboard(page);
 
   expect(consoleErrors).toEqual([]);

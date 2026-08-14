@@ -9,14 +9,25 @@ export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
 
+  // Clears the previous run's axe results, so the total in quality.json can
+  // only ever describe this run.
+  globalSetup: "./e2e/support/global-setup.ts",
+
   // A gate that retries is a gate that hides flake. If a spec is
   // non-deterministic we want to see it fail, not watch it pass on attempt 2.
   retries: 0,
 
   forbidOnly: !!process.env.CI,
-  reporter: process.env.CI
-    ? [["github"], ["html", { open: "never" }]]
-    : [["list"]],
+
+  // The json reporter runs everywhere, not just in CI. quality.json's test
+  // count is derived from it, and a number that is only produced on the
+  // machine nobody watches is a number nobody can check.
+  reporter: [
+    ["json", { outputFile: "reports/playwright.json" }],
+    ...(process.env.CI
+      ? ([["github"], ["html", { open: "never" }]] as const)
+      : ([["list"]] as const)),
+  ],
 
   use: {
     baseURL,
