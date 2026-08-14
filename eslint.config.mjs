@@ -9,6 +9,22 @@ const eslintConfig = defineConfig([
   // Must stay last: switches off the ESLint rules that would fight Prettier,
   // so `pnpm lint` and `pnpm format` can never disagree about the same line.
   prettier,
+  {
+    rules: {
+      // Deliberately discarded values are marked with a leading underscore.
+      // The alternative is either a warning nobody acts on or contorting the
+      // code to avoid naming something it does not use.
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

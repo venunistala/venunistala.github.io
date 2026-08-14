@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "serve:out": "serve out -l 4321 -c ../serve.json --no-port-switching",
-    "lint": "eslint",
+    "lint": "eslint --max-warnings 0",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
