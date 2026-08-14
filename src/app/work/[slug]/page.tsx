@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import { SiteLink } from "@/components/SiteLink";
 import { mdxComponents } from "@/components/mdx";
 import { getAllCaseStudies, getCaseStudy } from "@/lib/content";
 import { REQUIRED_SECTION, splitRequiredSection } from "@/lib/sections";
@@ -64,12 +64,12 @@ export default async function CaseStudyPage({
     <article className="flex flex-col gap-6">
       <header className="flex flex-col gap-4">
         <p className="font-mono text-[0.75rem] text-muted">
-          <Link
+          <SiteLink
             href="/#work"
             className="underline decoration-rule underline-offset-4 hover:text-trace hover:decoration-trace"
           >
             work
-          </Link>{" "}
+          </SiteLink>{" "}
           / {meta.slug}
         </p>
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { SiteLink } from "@/components/SiteLink";
 import { plexMono, plexSans, plexSerif } from "./fonts";
 import "./globals.css";
 
@@ -41,22 +41,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               already identifies them as links, and underlining five items in a
               row turns the header into a band of rules on a page whose whole
               visual language is rules. Content links keep theirs. */}
-          <Link
+          <SiteLink
             href="/"
             className="tracking-[0.06em] text-ink no-underline hover:text-trace hover:underline hover:decoration-trace hover:underline-offset-4"
           >
             venu nistala
-          </Link>
+          </SiteLink>
           <nav aria-label="Primary">
             <ul className="flex flex-wrap gap-x-5 gap-y-1">
               {NAV.map(({ href, label }) => (
                 <li key={href}>
-                  <Link
+                  <SiteLink
                     href={href}
                     className="text-muted no-underline hover:text-trace hover:underline hover:decoration-trace hover:underline-offset-4"
                   >
                     {label}
-                  </Link>
+                  </SiteLink>
                 </li>
               ))}
             </ul>

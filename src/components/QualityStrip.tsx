@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SiteLink } from "@/components/SiteLink";
 import { readQualityReport } from "@/lib/quality";
 
 /**
@@ -58,12 +58,12 @@ export function QualityStrip() {
           </span>
         </div>
       ))}
-      <Link
+      <SiteLink
         href="/how-this-site-is-tested/"
         className="text-[0.6875rem] text-trace underline decoration-rule underline-offset-4 hover:decoration-trace ms-auto"
       >
         what this run does not prove →
-      </Link>
+      </SiteLink>
     </div>
   );
 }

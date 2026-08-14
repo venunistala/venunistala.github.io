@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SiteLink } from "@/components/SiteLink";
 import { QualityStrip } from "@/components/QualityStrip";
 import { getAllCaseStudies } from "@/lib/content";
 
@@ -70,12 +70,12 @@ export default function Home() {
                     scope="row"
                     className="min-w-[15ch] py-3 pe-6 font-normal"
                   >
-                    <Link
+                    <SiteLink
                       href={`/work/${meta.slug}/`}
                       className="font-serif text-base text-ink underline decoration-rule underline-offset-4 hover:decoration-trace"
                     >
                       {meta.title}
-                    </Link>
+                    </SiteLink>
                   </th>
                   <td className="py-3 pe-6 font-sans text-sm">{meta.role}</td>
                   <td className="py-3 pe-6 font-mono text-[0.8125rem] whitespace-nowrap">
