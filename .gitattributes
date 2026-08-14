@@ -1,0 +1,14 @@
+# Keep the working tree LF on every platform.
+#
+# Without this, a clone on Windows (core.autocrlf=true) checks files out as
+# CRLF while Prettier's default endOfLine is "lf" — so `pnpm format:check`
+# passes in CI and fails on the developer's machine, or vice versa. Normalising
+# here means the gate gives the same answer everywhere.
+* text=auto eol=lf
+
+# Binary: never touch line endings.
+*.ico binary
+*.png binary
+*.jpg binary
+*.woff binary
+*.woff2 binary
