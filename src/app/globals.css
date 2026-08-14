@@ -1,27 +1,88 @@
 @import "tailwindcss";
 
-/* Phase 0 holding colours only — deliberately just enough to render legible,
-   contrast-passing text. The real token system (4–6 named values) is defined
-   in Phase 1 and implemented in Phase 3; replace these then, do not extend
-   them piecemeal before that. */
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ── Tokens ───────────────────────────────────────────────────────────
+   Six values, from the approved Phase 1 plan. Every colour on this site
+   resolves to one of them; no component introduces its own.
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+   Contrast against --paper, computed rather than eyeballed:
+     --ink    17.03:1   AAA
+     --muted   7.25:1   AAA
+     --trace   8.46:1   AAA
+     --fail    7.58:1   AAA
+     --rule    1.55:1   decorative only, see below
+
+   Two standing rules:
+
+   1. There is no green. --trace is not a status colour: it marks values a
+      reader can go and verify — a commit SHA, a run timestamp, a link to
+      CI. It means "checkable", not "important".
+
+   2. Status is never carried by colour alone. --fail and --trace sit
+      1.12:1 apart in greyscale, so anything red must also carry a word.
+      --fail is for real failures and never for emphasis.
+
+   --rule is deliberately below the 3:1 non-text threshold. It is allowed
+   to be, because nothing here is identifiable by a line alone: table
+   structure is in the markup, sections are in headings, status is in
+   text. Delete every rule on the site and nothing becomes ambiguous. */
+:root {
+  --paper: #f7f9f9;
+  --ink: #14171a;
+  --muted: #4e545a;
+  --rule: #c6cbcb;
+  --trace: #0b4f6c;
+  --fail: #9e1b15;
+
+  /* One committed rendering. A record is a document, and documents have
+     one ground. Declared explicitly so the page never borrows a host
+     theme's background. */
+  color-scheme: light;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-trace: var(--trace);
+  --color-fail: var(--fail);
+
+  /* Three voices. serif = a human asserted this. sans = explanation.
+     mono = a machine emitted this. */
+  --font-serif: var(--font-plex-serif);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
+/* ── Base ─────────────────────────────────────────────────────────────
+   Element defaults live in @layer base so that Tailwind's utilities,
+   which sit in a later layer, always win. This is the difference between
+   a utility class adjusting an element and a bare element selector
+   silently cancelling it — the two must not be able to fight over the
+   same property. Nothing outside this layer selects a bare element. */
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-paper);
+    /* Digits line up in the work index and the gate strip. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    line-height: 1.6;
+  }
+
+  /* A visible focus state is not optional on a site gated by axe. */
+  :focus-visible {
+    outline: 2px solid var(--color-trace);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-trace);
+    color: var(--color-paper);
+  }
 }
