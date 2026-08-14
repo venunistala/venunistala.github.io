@@ -7,7 +7,7 @@
     "build": "next build",
     "serve:out": "serve out -l 4321 -c ../serve.json --no-port-switching",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
