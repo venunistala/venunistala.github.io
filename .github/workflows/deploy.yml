@@ -1,0 +1,116 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Deploys are serialised rather than cancelled. Cancelling an in-flight Pages
+# deploy can leave the site half-published, and a queued run that waits is
+# cheaper than a site in an unknown state.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Before setup-node, because `cache: pnpm` needs pnpm to already exist.
+      # The version comes from packageManager in package.json.
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+
+      # Explicit, though test:e2e builds again through its webServer. A broken
+      # build fails here with the compiler's own message rather than as a
+      # server that never came up.
+      - run: pnpm build
+
+      - run: pnpm test
+
+      # Run 1 measures. It builds and tests the site as it stands, with no
+      # quality.json, and leaves behind the reports the next step reads.
+      - name: Gate (measuring run)
+        run: pnpm test:e2e
+
+      - name: Write quality.json from that run
+        run: node scripts/write-quality.mjs
+
+      # Run 2 validates. test:e2e rebuilds, so this build is the first that
+      # contains the strip, and the first time the strip is ever rendered and
+      # scanned by axe. The bytes this leaves in out/ are the bytes that
+      # deploy — nothing is rebuilt after the last test to touch it.
+      #
+      # There is an unavoidable fixed point here worth naming: any build that
+      # embeds a report of its own testing changes the bytes that were tested.
+      # It is resolved by measuring once and validating once, rather than
+      # pretending the regress can be closed. The counts are identical across
+      # the two runs because the specs are; only the timestamp belongs to the
+      # measuring run.
+      - name: Gate (validating run, against what will deploy)
+        run: pnpm test:e2e
+
+      # Pages served from an artifact does not run Jekyll, so this is belt and
+      # braces — but the charter requires .nojekyll to survive every build, and
+      # a rule nothing checks is a rule that quietly stops being true.
+      - name: Verify .nojekyll survived into the export
+        run: test -f out/.nojekyll
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload the tested site
+        uses: actions/upload-artifact@v7
+        with:
+          name: site
+          path: out/
+          # Without this, dotfiles are silently dropped and .nojekyll never
+          # reaches the deploy job.
+          include-hidden-files: true
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Downloaded rather than rebuilt. Rebuilding here would deploy bytes no
+      # test ever saw, which would make the claim on the front page false.
+      - name: Download the tested site
+        uses: actions/download-artifact@v8
+        with:
+          name: site
+          path: out
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./out
+
+      - id: deployment
+        uses: actions/deploy-pages@v5
