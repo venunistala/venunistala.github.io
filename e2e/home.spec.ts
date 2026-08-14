@@ -5,7 +5,7 @@ import {
   gotoCollectingConsole,
 } from "./support/checks";
 import { getAllCaseStudies } from "../src/lib/content";
-import { readQualityReport } from "../src/lib/quality";
+import { readQualityReport, shortCommit } from "../src/lib/quality";
 
 test.describe("/", () => {
   test("renders, scans clean, and is keyboard reachable", async ({ page }) => {
@@ -52,11 +52,14 @@ test.describe("/", () => {
       await expect(tail).toHaveCount(0);
     } else {
       await expect(tail).toHaveCount(1);
-      const strip = page.getByRole("main").locator("div", { has: tail });
+      // The strip is the only description list on the home page.
+      const strip = page.getByRole("main").locator("dl");
+      await expect(strip).toHaveCount(1);
       for (const [label, value] of [
         ["Tests", report.tests],
         ["Axe violations", report.axeViolations],
-        ["Commit", report.commit],
+        // Displayed short, stored full — see shortCommit.
+        ["Commit", report.commit && shortCommit(report.commit)],
         ["Run", report.timestamp],
       ] as const) {
         if (value === undefined) {

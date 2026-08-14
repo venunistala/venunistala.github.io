@@ -20,6 +20,19 @@ export type QualityReport = {
   readonly timestamp?: string;
 };
 
+/**
+ * Git's short form, for display only.
+ *
+ * The full SHA is what CI records and what the file keeps; seven characters is
+ * what a reader copies into a compare view. Truncating for display is not
+ * hiding anything — the short form resolves to exactly one commit — and it
+ * stops a 40-character string dominating a line whose other values are
+ * two-digit counts.
+ */
+export function shortCommit(sha: string): string {
+  return sha.slice(0, 7);
+}
+
 const QUALITY_FILE = join(process.cwd(), "public", "quality.json");
 
 const KNOWN_FIELDS = ["tests", "axeViolations", "commit", "timestamp"] as const;

@@ -1,5 +1,5 @@
 import { SiteLink } from "@/components/SiteLink";
-import { readQualityReport } from "@/lib/quality";
+import { readQualityReport, shortCommit } from "@/lib/quality";
 
 /**
  * The signature element.
@@ -37,7 +37,11 @@ export function QualityStrip() {
     });
   }
   if (report.commit !== undefined) {
-    cells.push({ label: "Commit", value: report.commit, verifiable: true });
+    cells.push({
+      label: "Commit",
+      value: shortCommit(report.commit),
+      verifiable: true,
+    });
   }
   if (report.timestamp !== undefined) {
     cells.push({ label: "Run", value: report.timestamp, verifiable: true });
@@ -48,16 +52,19 @@ export function QualityStrip() {
 
   return (
     <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2 border-y border-rule py-3 font-mono text-[0.8125rem]">
-      {cells.map(({ label, value, verifiable }) => (
-        <div key={label} className="flex items-baseline gap-2">
-          <span className="text-[0.6875rem] tracking-[0.07em] text-muted uppercase">
-            {label}
-          </span>
-          <span className={verifiable ? "text-trace" : "text-ink"}>
-            {value}
-          </span>
-        </div>
-      ))}
+      {/* A description list, not a row of divs: these are label/value pairs,
+          which is what dl means. The link sits outside it because a link that
+          is neither a term nor a definition has no place inside one. */}
+      <dl className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
+        {cells.map(({ label, value, verifiable }) => (
+          <div key={label} className="flex items-baseline gap-2">
+            <dt className="text-[0.6875rem] tracking-[0.07em] text-muted uppercase">
+              {label}
+            </dt>
+            <dd className={verifiable ? "text-trace" : "text-ink"}>{value}</dd>
+          </div>
+        ))}
+      </dl>
       <SiteLink
         href="/how-this-site-is-tested/"
         className="text-[0.6875rem] text-trace underline decoration-rule underline-offset-4 hover:decoration-trace ms-auto"

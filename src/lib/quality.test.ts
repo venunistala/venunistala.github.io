@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { parseQualityReport, readQualityReport } from "./quality";
+import { parseQualityReport, readQualityReport, shortCommit } from "./quality";
 
 const full = {
   tests: 47,
@@ -104,5 +104,17 @@ describe("public/quality.json", () => {
     // A file that exists but carries nothing means CI produced no numbers,
     // which is a broken pipeline rather than an empty one.
     expect(Object.values(report ?? {}).some((v) => v !== undefined)).toBe(true);
+  });
+});
+
+describe("shortCommit", () => {
+  it("takes git's seven-character short form", () => {
+    expect(shortCommit("29f64709e31c1b23f80459fe0d4da69f2fd53b64")).toBe(
+      "29f6470",
+    );
+  });
+
+  it("leaves an already-short sha alone", () => {
+    expect(shortCommit("3b38825")).toBe("3b38825");
   });
 });
