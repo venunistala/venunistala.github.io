@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MDXRemote } from "next-mdx-remote/rsc";
 import { getAllCaseStudies, getCaseStudy } from "@/lib/content";
 
 // Every case study URL is known at build time. dynamicParams=false makes an
@@ -22,7 +23,7 @@ export default async function CaseStudyPage({
   params,
 }: PageProps<"/work/[slug]">) {
   const { slug } = await params;
-  const { meta } = getCaseStudy(slug);
+  const { meta, body } = getCaseStudy(slug);
 
   return (
     <article className="flex flex-col gap-6">
@@ -52,6 +53,14 @@ export default async function CaseStudyPage({
 
         <p>{meta.summary}</p>
       </header>
+
+      {/* Compiled at build time — the export ships HTML, not an MDX runtime.
+          Headings in the body start at h2, below the case study title, so the
+          document outline stays in order. Phase 3 supplies the components map
+          that gives these elements the token system. */}
+      <div className="flex flex-col gap-4">
+        <MDXRemote source={body} />
+      </div>
     </article>
   );
 }

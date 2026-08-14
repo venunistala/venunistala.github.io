@@ -2,6 +2,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import matter from "gray-matter";
 import { parseFrontmatter, type CaseStudyMeta } from "./frontmatter";
+import { assertRequiredSections } from "./sections";
 
 /**
  * Filesystem access for the content layer. Runs at build time only — the site
@@ -25,7 +26,9 @@ function readCaseStudyFile(slug: string): CaseStudy {
   const source = join("content", "work", `${slug}.mdx`);
   const raw = readFileSync(join(WORK_DIR, `${slug}.mdx`), "utf8");
   const { data, content } = matter(raw);
-  return { meta: parseFrontmatter(data, slug, source), body: content };
+  const meta = parseFrontmatter(data, slug, source);
+  assertRequiredSections(content, source);
+  return { meta, body: content };
 }
 
 /**
