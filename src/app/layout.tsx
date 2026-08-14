@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { plexMono, plexSans, plexSerif } from "./fonts";
 import "./globals.css";
-
-// Type faces are deliberately not chosen here. Phase 1 selects a display, body
-// and mono family and states why each suits this subject; Phase 3 wires them
-// in. Until then the page renders in the platform's own UI stack rather than
-// inheriting a scaffold's default as if it were a decision.
 
 export const metadata: Metadata = {
   title: {
@@ -26,31 +22,51 @@ const NAV = [
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html
+      lang="en"
+      className={`${plexSerif.variable} ${plexSans.variable} ${plexMono.variable} h-full antialiased`}
+    >
       <body className="flex min-h-full flex-col">
-        {/* Phase 2 is structural. Every class here is layout only — colour,
-            type and spacing are derived from the token system in Phase 3. */}
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:p-3"
+          className="sr-only focus:not-sr-only focus:absolute focus:start-4 focus:top-4 focus:border focus:border-rule focus:bg-paper focus:p-3 focus:font-mono focus:text-sm"
         >
           Skip to content
         </a>
 
-        <header className="flex flex-wrap items-baseline gap-x-6 gap-y-2 px-6 py-4">
-          <Link href="/">Venu Nistala</Link>
+        {/* The nav is set in mono and sized down deliberately. It is
+            wayfinding, not identity — the name is not a masthead here. */}
+        <header className="mx-auto flex w-full max-w-4xl flex-wrap items-baseline gap-x-6 gap-y-2 px-6 py-6 font-mono text-[0.8125rem]">
+          {/* Nav links carry no resting underline. In a nav landmark, position
+              already identifies them as links, and underlining five items in a
+              row turns the header into a band of rules on a page whose whole
+              visual language is rules. Content links keep theirs. */}
+          <Link
+            href="/"
+            className="tracking-[0.06em] text-ink no-underline hover:text-trace hover:underline hover:decoration-trace hover:underline-offset-4"
+          >
+            venu nistala
+          </Link>
           <nav aria-label="Primary">
-            <ul className="flex flex-wrap gap-x-4 gap-y-1">
+            <ul className="flex flex-wrap gap-x-5 gap-y-1">
               {NAV.map(({ href, label }) => (
                 <li key={href}>
-                  <Link href={href}>{label}</Link>
+                  <Link
+                    href={href}
+                    className="text-muted no-underline hover:text-trace hover:underline hover:decoration-trace hover:underline-offset-4"
+                  >
+                    {label}
+                  </Link>
                 </li>
               ))}
             </ul>
           </nav>
         </header>
 
-        <main id="main" className="flex flex-1 flex-col gap-8 px-6 py-8">
+        <main
+          id="main"
+          className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-10 px-6 pt-4 pb-24"
+        >
           {children}
         </main>
       </body>
