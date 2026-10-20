@@ -1,0 +1,52 @@
+---
+title: Continuous validation and live reporting — Tecsys R&D
+slug: tecsys-continuous-validation
+role: Quality Assurance Analyst, Tecsys R&D
+period: Feb 2021 – July 2021
+stack:
+  - Jenkins
+  - Docker
+  - Jira Xray
+  - Katalon Studio
+summary: Integrated test suites and Jenkins pipelines with Docker environments
+  so every product release was validated continuously, and connected Jira Xray
+  with Katalon Studio so regression results reported live instead of being
+  updated by hand.
+---
+
+## What was failing
+
+Release validation depended on someone remembering to run the suites, and
+regression results were updated by hand — so the status everyone saw lagged
+reality, and the lag itself was invisible. Reusable work stayed in
+individuals' heads rather than being published where other QA engineers could
+find and use it.
+
+## What I built
+
+Test suites and Jenkins pipelines integrated with Docker environments, so
+product releases were validated continuously against an environment that
+matched what shipped. Jira Xray was connected with Katalon Studio for live
+reporting, so regression results updated themselves and the manual updates
+disappeared. Reusable utilities and integrations were published for adoption
+across the internal QA community. And for test automation against the
+database, I resolved reading through encrypted blobs, so encrypted data could
+be tested and validated like anything else.
+
+## What it now blocks
+
+A release can no longer go out with "the suites were never run" as a hidden
+possibility — continuous validation runs them by default. Stale regression
+status is gone by construction: Xray shows what the suites reported, not
+what someone typed. And database-level validation is not blocked by
+encryption, because the encrypted blobs can now be read.
+
+## What it still doesn't catch
+
+Docker environments match production closely, not exactly — configuration,
+data, and neighbouring services in production can all behave in ways the
+containers never show. Live reporting shows what the suites checked; untested
+paths have no results to report, and a green dashboard can quietly mean
+narrow coverage. And published utilities are only as good as their adoption —
+a team that rolls its own helpers keeps its own risks, whether the shared
+ones exist or not.

@@ -15,7 +15,12 @@ export default function Home() {
         <h1 className="font-serif text-[2rem] leading-tight tracking-[-0.012em] text-balance">
           Venu Nistala
         </h1>
-        <p className="font-sans text-muted">SDET and test platform engineer.</p>
+        <p className="font-sans text-muted">Test Automation Lead.</p>
+        <p className="max-w-[68ch] font-sans text-sm text-muted">
+          Five-plus years building scalable test automation for enterprise
+          programs — frameworks, test-data systems, and CI/CD quality gates that
+          make regression trustworthy.
+        </p>
       </div>
 
       {/* Renders nothing until CI writes public/quality.json in Phase 5. An

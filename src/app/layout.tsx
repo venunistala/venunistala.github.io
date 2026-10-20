@@ -8,7 +8,8 @@ export const metadata: Metadata = {
     default: "Venu Nistala",
     template: "%s — Venu Nistala",
   },
-  description: "SDET and test platform engineer.",
+  description:
+    "Venu Nistala — Test Automation Lead. Frameworks, test data, and CI/CD quality gates.",
 };
 
 // Trailing slashes match next.config.ts, so navigation never costs a redirect

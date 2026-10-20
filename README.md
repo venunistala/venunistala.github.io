@@ -3,8 +3,9 @@
 Personal portfolio for an SDET / test platform engineer, built as a static
 export and deployed to GitHub Pages behind its own Playwright + axe gate.
 
-**Status: Phase 0 (scaffold).** One placeholder route, one smoke test. Design,
-content and CI are Phases 1–5.
+**Status: Phase 1 (content).** The scaffold is behind us — real case studies,
+a factual résumé, and field-tested quality patterns have replaced the
+placeholders. Content and CI are Phases 2–5.
 
 ## Commands
 

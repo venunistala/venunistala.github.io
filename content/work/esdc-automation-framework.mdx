@@ -1,0 +1,63 @@
+---
+title: One automation framework for many product teams — ESDC
+slug: esdc-automation-framework
+role: Test Automation Lead, Accenture
+period: July 2021 – Current
+stack:
+  - WebDriverIO
+  - TypeScript
+  - Selenium
+  - Jasmine
+  - Azure DevOps
+  - Docker
+  - BrowserStack
+summary: Built a shared end-to-end automation framework and the test-data
+  system behind it. A lock-release approach to shared credentials and data
+  files cut flakiness in parallel runs by 50% and regression execution time
+  by 60%.
+---
+
+## What was failing
+
+Parallel regression runs shared user credentials and data files with no
+coordination. Suites stepped on each other's data, so failures were flaky —
+re-running a build could turn it green, and nobody could tell a product defect
+from a collision. Each product team scripted its own way of working, so
+coverage was inconsistent and every suite invented its own helpers.
+Stakeholders had no dashboard showing regression scope or automation coverage.
+
+## What I built
+
+A modular end-to-end framework in WebDriverIO and TypeScript over Selenium,
+structured with Jasmine, that multiple product teams could adopt instead of
+forking. Around it: reusable utilities for random data generation, data
+masking, and test data management; a lock-release approach for user
+credentials and data files that removed the parallel-execution collisions;
+YAML pipelines in Azure DevOps and Docker images so the suites ran the same
+way in every environment as part of continuous integration and continuous
+testing; Azure Dashboards tracking regression scope and automation coverage;
+and the test automation strategy and branching strategy for the shared
+repository. Validation covered XML, SOAP and RESTful web service calls, and
+mobile automation for Android and iOS via BrowserStack was folded into the
+same framework for regression.
+
+## What it now blocks
+
+Parallel runs can no longer fail on data collisions — the lock-release on
+shared credentials and data makes that class of failure gone by construction,
+not by luck. A team cannot quietly drift off the framework: the automation
+strategy and branching strategy make adoption the path of least resistance.
+And untested scope cannot hide — the dashboards put regression scope and
+automation coverage in front of stakeholders instead of leaving gaps to be
+discovered at release time.
+
+## What it still doesn't catch
+
+An automation framework only sees the paths it scripts. Usability defects,
+visual regressions, and requirements that were wrong before they were
+automated all pass through green. The suites run in test environments that
+are close to production but not production — production data shapes, volumes,
+and third-party behaviour can produce failures no scripted environment
+reproduces. And the dashboards only report what the framework knows about:
+work tested outside it is invisible to them, which is why this never replaced
+exploratory testing.

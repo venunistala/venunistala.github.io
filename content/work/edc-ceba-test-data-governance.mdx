@@ -1,0 +1,63 @@
+---
+title: Test data governance for the CEBA program — EDC
+slug: edc-ceba-test-data-governance
+role: Test Automation Lead, Accenture
+period: July 2021 – Current
+stack:
+  - Selenium
+  - Java
+  - Maven
+  - Cucumber
+  - Azure DevOps
+  - OpenAI API
+summary: Built the Selenium/Java automation framework for the CEBA program
+  and a test data strategy with governance over shared environments. Test data
+  setup time fell 50%, automation maintenance fell 30%, and the same suites
+  served E2E regression, integration regression, UAT data creation, and
+  pre-production testing.
+---
+
+## What was failing
+
+Client data and QA data lived in the same shared environments with no rules
+about who could write what, so test data setup was slow and fragile — every
+run started with untangling conflicts. Automation existed, but each suite
+owned its own copy of the same plumbing: its own cross-browser drivers, its
+own wait logic, its own data generation. Maintenance cost grew with every
+suite, and the same flows were re-automated separately for E2E, integration,
+UAT data creation, and pre-production testing as if they were different jobs.
+
+## What I built
+
+A scalable end-to-end framework in Selenium, Java, and Maven, using the Page
+Object Model with a BDD structure and Gherkin syntax — and, the part that
+mattered more, a detailed test data strategy and governance model that kept
+client and QA data from conflicting across shared environments, cutting test
+data setup time by 50%. Centralised component classes for cross-browser
+drivers, wait handling, and test data generation replaced the per-suite
+copies, cutting automation maintenance time by 30%. The same automation was
+deliberately reused across E2E regression, integration regression, UAT test
+data creation, and pre-production testing. Execution ran through YAML
+pipelines in Azure DevOps with Azure Artifacts and pipeline references,
+tailored to the application architecture, including overnight batch jobs.
+Separately, I implemented a wrapper for the OpenAI API and delivered a proof
+of concept for using it in test automation.
+
+## What it now blocks
+
+Shared-environment data collisions are governed, not hoped away — the
+strategy defines who owns what data, so conflicts stopped being the default
+and setup stopped absorbing half the day. New suites cannot reinvent drivers,
+waits, or data generation; the centralised classes are the sanctioned way. And
+a flow automated once is available to every test phase instead of being
+re-scripted per phase.
+
+## What it still doesn't catch
+
+Governance prevents data conflicts; it does not validate that the data is
+semantically right — a row can be correctly isolated and still be the wrong
+row, and the framework will not flag that. BDD scenarios document the
+behaviour the team agreed on; behaviour nobody specified is never scripted,
+and the suite is silent about it. And the OpenAI wrapper is a proof of
+concept: it demonstrates a direction for test automation, not a gate anything
+has to pass through.

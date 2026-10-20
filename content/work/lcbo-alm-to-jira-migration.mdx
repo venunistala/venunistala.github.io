@@ -1,0 +1,67 @@
+---
+title: Moving 32+ teams off HP ALM to Jira — LCBO
+slug: lcbo-alm-to-jira-migration
+role: Test Automation Lead, Accenture
+period: July 2021 – Current
+stack:
+  - Java
+  - Jira APIs
+  - Karate
+  - JMeter
+  - Grafana
+  - InfluxDB
+  - Jenkins
+  - GCP
+summary: Migrated legacy test case management for 32+ teams from HP ALM to
+  Jira in three months, carrying 10K+ execution records across. Built the
+  performance testing framework on GCP (Karate, JMeter, Grafana, InfluxDB)
+  with live metrics and alerting, and a data-generation utility that saved 75%
+  of the data-generation budget.
+---
+
+## What was failing
+
+Test case management lived in HP ALM — a legacy platform holding 32+ teams'
+cases plus more than 10,000 execution records that could not simply be
+abandoned, which is the point at which migrations like this usually stall.
+Performance testing had its own economics problem: generating enough data to
+exercise the system across its components cost real money, and performance
+results were not visible live, so nobody could watch a run and see where it
+was degrading.
+
+## What I built
+
+Java utilities that exported the full ALM estate and imported it into Jira
+through the Jira APIs — cases, structure, and execution history — completing
+the migration for 32+ teams in three months. For performance: a utility that
+analysed transaction output files and generated a million records per
+transaction to test the system across multiple components, saving 75% of the
+budget previously spent on data generation; and a robust performance testing
+framework built on Karate, Grafana, and InfluxDB, created with DevOps and
+executed on GCP. JMeter was integrated with InfluxDB and Elasticsearch and
+Grafana for live metrics during runs, with an alerting strategy that
+published inconsistencies from Grafana into a Microsoft Teams channel. CI/CD
+closed the loop: a trigger from the GitHub repository ran the scripts on
+Jenkins pipelines and sent alerts to the teams. Alongside this, I worked with
+solution architects on business requirement documents, system requirement
+specifications, and functional documents to produce test strategies, test
+plans, and test cases.
+
+## What it now blocks
+
+No team is left behind on ALM — the migration preserves the execution history,
+which was the reason these moves stall. Performance data is no longer
+generated at whatever it costs: the utility makes volume cheap, and live
+Grafana metrics mean a degrading run is visible while it runs rather than
+discovered afterwards. Scripts cannot sit unrun — the GitHub trigger fires
+Jenkins automatically, and Teams alerting makes failures public.
+
+## What it still doesn't catch
+
+A migration preserves records; it does not preserve meaning. A field that
+imports cleanly into Jira can still mean something subtly different there, and
+no utility checks the semantics. Generated data has the shape of production
+data, not its surprises — a million synthetic records exercise volume, not
+the odd real-world values that break systems. And a performance framework
+measures the system under the load you designed; production traffic patterns
+you did not anticipate remain untested.
