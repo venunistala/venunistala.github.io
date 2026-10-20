@@ -98,7 +98,7 @@ export default function Home() {
               table keeps its proportions and scrolls sideways instead, which
               also means no column has to be hidden to make small screens work. */}
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[56rem] border-collapse text-left align-top">
+            <table className="w-full min-w-[52rem] border-collapse text-left align-top">
               <caption className="sr-only">
                 Case studies, ordered by slug. Each links to its full write-up.
               </caption>
