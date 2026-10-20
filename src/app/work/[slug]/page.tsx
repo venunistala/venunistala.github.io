@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { SiteLink } from "@/components/SiteLink";
+import { ReadingProgress } from "@/components/ReadingProgress";
+import { Reveal } from "@/components/Reveal";
 import { mdxComponents } from "@/components/mdx";
 import { getAllCaseStudies, getCaseStudy } from "@/lib/content";
 import { REQUIRED_SECTION, splitRequiredSection } from "@/lib/sections";
@@ -60,52 +62,87 @@ export default async function CaseStudyPage({
   const { meta, body } = getCaseStudy(slug);
   const { before, section, after } = splitRequiredSection(body);
 
+  // The work index is sorted by slug, and every case study page ends on the
+  // next one in that order — reading the four studies front to back is a
+  // guided tour of the same argument from four engagements.
+  const studies = getAllCaseStudies();
+  const index = studies.findIndex((study) => study.meta.slug === slug);
+  const next = studies[(index + 1) % studies.length];
+
   return (
-    <article className="flex flex-col gap-6">
-      <header className="flex flex-col gap-4">
-        <p className="font-mono text-[0.75rem] text-muted">
-          <SiteLink
-            href="/#work"
-            className="underline decoration-rule underline-offset-4 hover:text-trace hover:decoration-trace"
+    <>
+      <ReadingProgress />
+      <article className="flex flex-col gap-6">
+        <Reveal>
+          <header className="flex flex-col gap-4">
+            <p className="font-mono text-[0.75rem] text-muted">
+              <SiteLink
+                href="/#work"
+                className="underline decoration-rule underline-offset-4 hover:text-trace hover:decoration-trace"
+              >
+                work
+              </SiteLink>{" "}
+              / {meta.slug}
+            </p>
+
+            <h1 className="font-serif text-[1.85rem] leading-tight tracking-[-0.012em] text-balance sm:text-[2.25rem]">
+              {meta.title}
+            </h1>
+
+            <Facts role={meta.role} period={meta.period} stack={meta.stack} />
+
+            <p className="max-w-[68ch] font-sans">{meta.summary}</p>
+          </header>
+        </Reveal>
+
+        <Reveal>
+          <div className="flex flex-col gap-4">
+            <MDXRemote source={before} components={mdxComponents} />
+          </div>
+        </Reveal>
+
+        {/* The limitations section is the only boxed element on the page, which
+            makes it the heaviest thing on it. That is the argument, not a
+            decoration: for a test engineer the boundary of your own gate is the
+            credential, so the honest section gets the most weight rather than
+            being set as fine print. The border is --ink, not --fail — nothing
+            here failed. */}
+        {section && (
+          <Reveal>
+            <section
+              aria-label={REQUIRED_SECTION}
+              className="flex flex-col gap-4 border border-ink p-6"
+            >
+              <MDXRemote source={section} components={mdxComponents} />
+            </section>
+          </Reveal>
+        )}
+
+        {after && (
+          <Reveal>
+            <div className="flex flex-col gap-4">
+              <MDXRemote source={after} components={mdxComponents} />
+            </div>
+          </Reveal>
+        )}
+
+        <Reveal>
+          <nav
+            aria-label="Next case study"
+            className="mt-4 border-t border-rule pt-5"
           >
-            work
-          </SiteLink>{" "}
-          / {meta.slug}
-        </p>
-
-        <h1 className="font-serif text-[1.85rem] leading-tight tracking-[-0.012em] text-balance">
-          {meta.title}
-        </h1>
-
-        <Facts role={meta.role} period={meta.period} stack={meta.stack} />
-
-        <p className="max-w-[68ch] font-sans">{meta.summary}</p>
-      </header>
-
-      <div className="flex flex-col gap-4">
-        <MDXRemote source={before} components={mdxComponents} />
-      </div>
-
-      {/* The limitations section is the only boxed element on the page, which
-          makes it the heaviest thing on it. That is the argument, not a
-          decoration: for a test engineer the boundary of your own gate is the
-          credential, so the honest section gets the most weight rather than
-          being set as fine print. The border is --ink, not --fail — nothing
-          here failed. */}
-      {section && (
-        <section
-          aria-label={REQUIRED_SECTION}
-          className="flex flex-col gap-4 border border-ink p-6"
-        >
-          <MDXRemote source={section} components={mdxComponents} />
-        </section>
-      )}
-
-      {after && (
-        <div className="flex flex-col gap-4">
-          <MDXRemote source={after} components={mdxComponents} />
-        </div>
-      )}
-    </article>
+            <p className="font-mono text-[0.6875rem] tracking-[0.07em] text-muted uppercase">
+              Next case study
+            </p>
+            <SiteLink
+              href={`/work/${next.meta.slug}/`}
+              className="font-serif text-xl text-ink underline decoration-rule underline-offset-4 transition-colors duration-300 hover:decoration-trace"
+            >
+              {next.meta.title}
+            </SiteLink>
+          </nav>
+        </Reveal>
+      </article>
+    </>
   );
 }

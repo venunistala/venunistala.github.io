@@ -86,3 +86,40 @@
     color: var(--color-paper);
   }
 }
+
+/* ── Motion ───────────────────────────────────────────────────────────
+   Two rules, both load-bearing:
+
+   1. The reveal hidden state is scoped to `html.js`, a class the root
+      layout sets with an inline script before first paint. Without JS
+      there is no hidden state at all — animation may decorate content,
+      it may never be the thing standing between a reader and it.
+
+   2. Reduced motion wins over every effect on the site. The media query
+      below restores full visibility with no transition, and the client
+      components check the same preference before animating. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+.js .reveal {
+  /* Transform only, never opacity. An opacity transition would leave the
+     text at a mid-blend colour whenever anything measures the page — a
+     screenshot, a contrast scan — and those blends fail AA. The slide
+     carries the motion; the colour always stays exactly as designed. */
+  transform: translateY(14px);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.js .reveal[data-in="true"] {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal {
+    transform: none;
+    transition: none;
+  }
+}

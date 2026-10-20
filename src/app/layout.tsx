@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { SiteLink } from "@/components/SiteLink";
+import { NavLinks } from "@/components/NavLinks";
+import { SiteFooter } from "@/components/SiteFooter";
 import { plexMono, plexSans, plexSerif } from "./fonts";
 import "./globals.css";
 
@@ -27,6 +30,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${plexSerif.variable} ${plexSans.variable} ${plexMono.variable} h-full antialiased`}
     >
+      {/* Marks the document as JS-capable before first paint. globals.css
+          scopes the reveal animations' hidden state to `html.js`, so a
+          no-JS render never hides content behind an animation that will
+          not run. */}
+      <Script id="js-gate" strategy="beforeInteractive">
+        {"document.documentElement.classList.add('js')"}
+      </Script>
       <body className="flex min-h-full flex-col">
         <a
           href="#main"
@@ -49,18 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             venu nistala
           </SiteLink>
           <nav aria-label="Primary">
-            <ul className="flex flex-wrap gap-x-5 gap-y-1">
-              {NAV.map(({ href, label }) => (
-                <li key={href}>
-                  <SiteLink
-                    href={href}
-                    className="text-muted no-underline hover:text-trace hover:underline hover:decoration-trace hover:underline-offset-4"
-                  >
-                    {label}
-                  </SiteLink>
-                </li>
-              ))}
-            </ul>
+            <NavLinks links={NAV} />
           </nav>
         </header>
 
@@ -70,6 +69,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           {children}
         </main>
+
+        <SiteFooter />
       </body>
     </html>
   );

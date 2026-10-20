@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SiteLink } from "@/components/SiteLink";
+import { Reveal } from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "Quality lab",
@@ -58,24 +59,22 @@ export default function QualityLabPage() {
         </p>
       </div>
 
-      {PATTERNS.map(({ title, used, body, limit }) => (
-        <section
-          key={title}
-          aria-labelledby={title}
-          className="flex flex-col gap-2"
-        >
-          <h2
-            id={title}
-            className="border-b border-rule pb-2 font-sans text-xs font-semibold tracking-[0.11em] text-muted uppercase"
-          >
-            {title}
-          </h2>
-          <p className="font-mono text-[0.75rem] text-muted">{used}</p>
-          <p className="max-w-[68ch] font-sans text-sm">{body}</p>
-          <p className="max-w-[68ch] font-sans text-sm text-muted">
-            Limit: {limit}
-          </p>
-        </section>
+      {PATTERNS.map(({ title, used, body, limit }, index) => (
+        <Reveal key={title} delay={index * 60}>
+          <section aria-labelledby={title} className="flex flex-col gap-2">
+            <h2
+              id={title}
+              className="border-b border-rule pb-2 font-sans text-xs font-semibold tracking-[0.11em] text-muted uppercase"
+            >
+              {title}
+            </h2>
+            <p className="font-mono text-[0.75rem] text-muted">{used}</p>
+            <p className="max-w-[68ch] font-sans text-sm">{body}</p>
+            <p className="max-w-[68ch] font-sans text-sm text-muted">
+              Limit: {limit}
+            </p>
+          </section>
+        </Reveal>
       ))}
     </>
   );

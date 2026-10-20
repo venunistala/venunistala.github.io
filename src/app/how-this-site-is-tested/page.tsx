@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Reveal } from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "How this site is tested",
@@ -59,51 +60,55 @@ export default function HowThisSiteIsTestedPage() {
         </p>
       </div>
 
-      <section aria-labelledby="pipeline" className="flex flex-col gap-3">
-        <h2
-          id="pipeline"
-          className="border-b border-rule pb-2 font-sans text-xs font-semibold tracking-[0.11em] text-muted uppercase"
-        >
-          The pipeline
-        </h2>
-        <ol className="flex max-w-[68ch] list-decimal flex-col gap-3 ps-5 font-sans text-sm">
-          {STEPS.map(({ name, detail }) => (
-            <li key={name}>
-              <span className="font-mono text-[0.8125rem]">{name}</span>
-              {" — "}
-              {detail}
-            </li>
-          ))}
-        </ol>
-      </section>
+      <Reveal>
+        <section aria-labelledby="pipeline" className="flex flex-col gap-3">
+          <h2
+            id="pipeline"
+            className="border-b border-rule pb-2 font-sans text-xs font-semibold tracking-[0.11em] text-muted uppercase"
+          >
+            The pipeline
+          </h2>
+          <ol className="flex max-w-[68ch] list-decimal flex-col gap-3 ps-5 font-sans text-sm">
+            {STEPS.map(({ name, detail }) => (
+              <li key={name}>
+                <span className="font-mono text-[0.8125rem]">{name}</span>
+                {" — "}
+                {detail}
+              </li>
+            ))}
+          </ol>
+        </section>
+      </Reveal>
 
-      <section
-        aria-label="What the gate cannot see"
-        className="flex flex-col gap-4 border border-ink p-6"
-      >
-        <h2 className="font-sans text-sm font-semibold">
-          What the gate cannot see
-        </h2>
-        <ul className="flex max-w-[68ch] list-disc flex-col gap-2 ps-5 font-sans text-sm">
-          <li>
-            The axe scan covers a subset of WCAG. A clean scan is not a usable
-            site — it is the absence of the defects a scanner can detect.
-          </li>
-          <li>
-            The specs assert what was written, not what was forgotten. A route
-            nobody wrote a spec for is a route nobody checks.
-          </li>
-          <li>
-            No test runs against production. The gate tests the export as built
-            locally; the deployed environment can still differ.
-          </li>
-          <li>
-            The quality report embedded in the export describes the run that
-            produced it. It is a measurement of the past, not a guarantee of the
-            next change.
-          </li>
-        </ul>
-      </section>
+      <Reveal>
+        <section
+          aria-label="What the gate cannot see"
+          className="flex flex-col gap-4 border border-ink p-6"
+        >
+          <h2 className="font-sans text-sm font-semibold">
+            What the gate cannot see
+          </h2>
+          <ul className="flex max-w-[68ch] list-disc flex-col gap-2 ps-5 font-sans text-sm">
+            <li>
+              The axe scan covers a subset of WCAG. A clean scan is not a usable
+              site — it is the absence of the defects a scanner can detect.
+            </li>
+            <li>
+              The specs assert what was written, not what was forgotten. A route
+              nobody wrote a spec for is a route nobody checks.
+            </li>
+            <li>
+              No test runs against production. The gate tests the export as
+              built locally; the deployed environment can still differ.
+            </li>
+            <li>
+              The quality report embedded in the export describes the run that
+              produced it. It is a measurement of the past, not a guarantee of
+              the next change.
+            </li>
+          </ul>
+        </section>
+      </Reveal>
     </>
   );
 }

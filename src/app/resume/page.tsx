@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { SiteLink } from "@/components/SiteLink";
+import { SkillExplorer } from "@/components/SkillExplorer";
+import { Reveal } from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "Résumé",
@@ -7,26 +9,38 @@ export const metadata: Metadata = {
     "Venu Gopal Nistala — Test Automation Lead. Factual record of roles, skills, projects, education, and certifications.",
 };
 
-const SKILLS: { label: string; items: string }[] = [
+const SKILLS = [
   {
     label: "Test automation",
-    items: "Selenium WebDriver, WebDriverIO, Cucumber, TestNG, Robot Framework",
+    tools: [
+      "Selenium WebDriver",
+      "WebDriverIO",
+      "Cucumber",
+      "TestNG",
+      "Robot Framework",
+    ],
   },
-  { label: "Languages", items: "Java, TypeScript, Python, C#" },
+  { label: "Languages", tools: ["Java", "TypeScript", "Python", "C#"] },
   {
     label: "DevOps & CI/CD",
-    items: "Azure DevOps, Jenkins, Docker, YAML, BrowserStack",
+    tools: ["Azure DevOps", "Jenkins", "Docker", "YAML", "BrowserStack"],
   },
   {
     label: "Performance & monitoring",
-    items: "JMeter, Grafana, InfluxDB, Elasticsearch, Dynatrace",
+    tools: ["JMeter", "Grafana", "InfluxDB", "Elasticsearch", "Dynatrace"],
   },
-  { label: "API & integration", items: "REST, SOAP, SoapUI, Postman" },
-  { label: "Data & databases", items: "SQL, JSON, XML" },
+  { label: "API & integration", tools: ["REST", "SOAP", "SoapUI", "Postman"] },
+  { label: "Data & databases", tools: ["SQL", "JSON", "XML"] },
   {
     label: "Other tools",
-    items:
-      "Maven, Git, Jira, Katalon Studio, Agile methodologies, accessibility testing",
+    tools: [
+      "Maven",
+      "Git",
+      "Jira",
+      "Katalon Studio",
+      "Agile methodologies",
+      "Accessibility testing",
+    ],
   },
 ];
 
@@ -76,15 +90,17 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section aria-labelledby={title} className="flex flex-col gap-3">
-      <h2
-        id={title}
-        className="border-b border-rule pb-2 font-sans text-xs font-semibold tracking-[0.11em] text-muted uppercase"
-      >
-        {title}
-      </h2>
-      {children}
-    </section>
+    <Reveal>
+      <section aria-labelledby={title} className="flex flex-col gap-3">
+        <h2
+          id={title}
+          className="border-b border-rule pb-2 font-sans text-xs font-semibold tracking-[0.11em] text-muted uppercase"
+        >
+          {title}
+        </h2>
+        {children}
+      </section>
+    </Reveal>
   );
 }
 
@@ -139,16 +155,9 @@ export default function ResumePage() {
       </Section>
 
       <Section title="Technical skills">
-        <dl className="flex flex-col gap-2 font-sans text-sm">
-          {SKILLS.map(({ label, items }) => (
-            <div key={label} className="flex gap-3">
-              <dt className="w-[11rem] shrink-0 font-mono text-[0.8125rem] text-muted">
-                {label}
-              </dt>
-              <dd className="max-w-[56ch]">{items}</dd>
-            </div>
-          ))}
-        </dl>
+        {/* The explorer highlights a category; it never hides one. The
+            résumé remains fully readable with every tool present. */}
+        <SkillExplorer categories={SKILLS} />
       </Section>
 
       <Section title="Employment">
